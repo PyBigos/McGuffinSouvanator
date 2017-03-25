@@ -2,6 +2,7 @@ require([
     "esri/map",
     "esri/layers/FeatureLayer",
     "esri/tasks/query",
+    "esri/toolbars/draw",
     "esri/tasks/StatisticDefinition",
     "esri/geometry/geometryEngine",
     "esri/symbols/SimpleMarkerSymbol",
@@ -10,9 +11,10 @@ require([
     "esri/graphic",
     "esri/Color",
     "dojo/dom",
+    "dojo/on",
     "dojo/domReady!"
-], function(Map, FeatureLayer, Query, StatisticDefinition, geometryEngine,
-            SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, Graphic, Color, dom) {
+], function(Map, FeatureLayer, Query,Draw, StatisticDefinition, geometryEngine,
+            SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, Graphic, Color, dom,on) {
 
 
     console.log("load");
@@ -24,7 +26,7 @@ require([
     });
 
     var hits = new FeatureLayer("https://services7.arcgis.com/Gk8wYdLBgQPxqVZU/arcgis/rest/services/RedSox/FeatureServer/0",{
-
+        definitionExpression:"description = 'Home Run",
         outFields:["*"]
     });
 
@@ -56,7 +58,7 @@ require([
 
     var park = "A"//dom.byId("park").value;
     var team = "c"//dom.byId("team").value;
-    //var dTime = dom.byId("dTime").value;
+    var dTime = dom.byId("dTime").value;
     //var inning = dom.byId("inning").value;
 
     //Build query Object
@@ -69,6 +71,9 @@ require([
 
     if (team && team.value) {
         console.log("team = '" &team&"'");
+    }
+    if (dTime && dTime.value) {
+        console.log("team = '" &dTime.value&"'");
     }
 
 
@@ -83,6 +88,69 @@ require([
         console.log(queryRes.features.length);
 
 
+    });
+
+
+
+
+    //Draw toolbar code
+    function dynamicDraw() {
+        /*
+         * Step: Implement the Draw toolbar
+         */
+        var tbDraw = new Draw(map);
+        tbDraw.on("draw-end", displayPolygon);
+        tbDraw.activate(Draw.POLYGON);
+
+    }
+
+    function displayPolygon(evt) {
+
+        // Get the geometry from the event object
+        var geometryInput = evt.geometry;
+
+        // Define symbol for finished polygon
+        var tbDrawSymbol = new SimpleFillSymbol({
+            "color": [
+                255,
+                170,
+                0,
+                143
+            ],
+            "outline": {
+                "color": [
+                    85,
+                    255,
+                    0,
+                    255
+                ],
+                "width": 2.25,
+                "type": "esriSLS",
+                "style": "esriSLSSolid"
+            },
+            "type": "esriSFS",
+            "style": "esriSFSSolid"
+        });
+
+        // Clear the map's graphics layer
+        map.graphics.clear();
+
+        /*
+         * Step: Construct and add the polygon graphic
+         */
+        var graphicPolygon = new Graphic(geometryInput, tbDrawSymbol);
+        map.graphics.add(graphicPolygon);
+
+        query.geometry;
+        query.where = "description = 'Home Run";
+
+
+    }
+
+
+    //Button click for draw
+    on(dom.byId("test"),'click',function(){
+        dynamicDraw();
     });
 
 
