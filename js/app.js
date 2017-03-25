@@ -26,7 +26,7 @@ require([
     });
 
     var hits = new FeatureLayer("https://services7.arcgis.com/Gk8wYdLBgQPxqVZU/arcgis/rest/services/RedSox/FeatureServer/0",{
-        definitionExpression:"description = 'Home Run",
+        definitionExpression:"description = 'Home Run'",
         outFields:["*"]
     });
 
@@ -141,7 +141,7 @@ require([
         var graphicPolygon = new Graphic(geometryInput, tbDrawSymbol);
         map.graphics.add(graphicPolygon);
 
-        query.geometry;
+        query.geometry= evt.geometry;
         query.where = "description = 'Home Run";
 
 
